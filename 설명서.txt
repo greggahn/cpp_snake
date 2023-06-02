@@ -1,0 +1,81 @@
+사용방법
+
+1. Gate, Poison, Growth 스코어 가져올때
+	gate_num[stage];
+	pItem_num[stage];
+	gItem_num[stage];
+
+
+2. Map에 Item들 그릴 때
+	while(true){
+		show_item();
+	}
+
+
+3. Map에 Gate 그릴 때
+	gate.show();
+	
+	ex)	
+		if(뱀 몸길이 5 이상일 때){
+			gate.show();
+		}
+
+
+4. 뱀이 Gate에 들어갈 때
+
+	pair<int,int> out = gate.enter(뱀 머리 좌표 y, 뱀 머리 좌표 x);     // 반대편 게이트 좌표 리턴
+	(뱀 다 통과 하면)
+	gate.remove();
+
+
+5. 뱀이 Item 먹을 때 
+
+	eat(뱀 머리 좌표 y, 뱀 머리 좌표 x);         // Poison과 Growth 구분 필요 없음, 리턴값 : 5 또는 6
+
+
+6. 게임 클리어 해서 아이템을 전부 지울 때
+
+if(clear){
+	gate.remove();
+	delete_item();
+	reset_score();
+	stage++;
+}
+
+
+7. 파일 합칠 때 요령 복붙하세요
+
+#include <iostream>
+#include <cstdlib>
+#include <vector>
+#include <thread>
+using namespace std;
+
+//단계, 아이템 등장 시간 변수
+int stage = 0;
+int Item_Max = 3, Item_print_delay = 3, Item_change_delay = 5;
+
+//점수
+int cur_len[4] = {0,0,0,0};
+int pItem_num[4] = {0,0,0,0};
+int gItem_num[4] = {0,0,0,0};
+int gate_num[4] = {0,0,0,0};
+
+//헤더파일
+//#include "map.h"
+#include "Poison.h"
+#include "Growth.h"
+#include "Gate.h"
+#include "Functions.h"
+
+//스코어 0으로 초기화, 게이트 오브젝트 생성
+int Gate::score = 0; int Poison::score = 0; int Growth::score = 0;
+int Item::total = 0;
+Gate gate;
+
+
+
+
+
+
+	
