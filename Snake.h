@@ -1,89 +1,120 @@
 #pragma once
-#include <curses.h>
+
 #include "Drawable.h"
 #include <deque>
-
-enum Direction { // 방향을 enum으로 설정하여 4개 중 하나의 값만 가질 수 있게 함.
-    up = 1,
-    down = -1,
-    left = 2,
-    right = -2
+using namespace std;
+enum Direction
+{
+	go_up = -1,
+	go_down = 1,
+	go_left = -2,
+	go_right = 2
 };
-// 슨네이크의 좌표와 아이콘 설정
+
 class SnakePiece : public Drawable
 {
 public:
-    SnakePiece() {
+    SnakePiece()
+    {
         this->x = this->y = 0;
         this->icon = '#';
     }
-    SnakePiece(int y, int x) {
-        this->y = y;
+
+    SnakePiece(int y, int x)
+    {
         this->x = x;
+        this->y = y;
         this->icon = '#';
     }
+
+    SnakePiece(int y, int x, chtype icon)
+    {
+        this->x = x;
+        this->y = y;
+        this->icon = icon;
+    }
+
 };
-//스네이크 움직임 제어 및 길이 변경
-class Snake {
-    Direction cur_dir; //현재 스네이크가 움직이는 방향
-public: 
-    std::deque<SnakePiece> prev_snake; //덱을 사용해 삭제 연산을 편하게 함
-    Snake() { //초기 방향은 아래로 설정
-        cur_dir = down;
+
+class Snake
+{
+	
+	Direction cur_direction;
+
+public:
+	deque<SnakePiece> prev_pieces;
+
+	Snake()
+    {
+        cur_direction = go_down;
     }
-    void attachPiece(SnakePiece piece) { //길이 늘리기
-        prev_snake.push_back(piece);
+    void addPiece(SnakePiece piece)
+    {
+        prev_pieces.push_back(piece);
     }
 
-    void dettachPiece() { //흔적 삭제하기
-        prev_snake.pop_front();
+    void removePiece()
+    {
+        prev_pieces.pop_front();
     }
 
-    void dettachBackPiece() { //poison아이템 먹었을 때
-        prev_snake.pop_back();
+    // eatPoison
+    void removeBackPiece()
+    {
+        prev_pieces.pop_back();
     }
-    SnakePiece tail() { 
-        return prev_snake.front();
-    }
-
-    SnakePiece head() {
-        return prev_snake.back();
-    }
-
-    Direction getDirection() { //현재 방향 반환
-        return cur_dir;
+	SnakePiece tail()
+    {
+        return prev_pieces.front();
     }
 
-    void setDirection(Direction d) { //현재 방향과 같은 방향이 입력되지 않으면 방향을 새로 설정
-        if (d != cur_dir) { cur_dir = d; }
+    SnakePiece head()
+    {
+        return prev_pieces.back();
     }
 
-    SnakePiece nexthead() { //스네이크의 움직임 구현 부분
+    Direction getDirection()
+    {
+        return cur_direction;
+    }
+
+    void setDirection(Direction d)
+    {
+        cur_direction = d;
+    }
+
+	SnakePiece nexthead()
+    {
         int row = head().getY();
         int col = head().getX();
 
-        switch (cur_dir)
+        switch (cur_direction)
         {
-        case down:
+        case go_down:
             row++;
             break;
 
-        case up:
+        case go_up:
             row--;
             break;
 
-        case left:
-            //col--;
+        case go_left:
             col--;
             break;
 
-        case right:
-            //col++;
+        case go_right:
             col++;
             break;
         }
 
         return SnakePiece(row, col);
     }
-
 };
+
+
+
+
+
+
+
+

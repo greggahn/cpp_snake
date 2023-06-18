@@ -1,5 +1,6 @@
 #pragma once
-// 스네이크, 아이템 등의 좌표와 아이콘 설정 및 반환
+#include <curses.h>
+
 class Drawable {
 public :
     Drawable() {

@@ -1,68 +1,104 @@
 #pragma once
 #include "Drawable.h"
-#include "map.cpp"
+#include <curses.h>
+#include <string>
+#include <time.h>
 
-#define BOARD_ROWS 30
-#define BOARD_COLS 30
+#define	BOARD_ROWS 30
+#define	BOARD_COLS 40	
 
-class Board{
+class Board
+{
 public:
-    int time = 50;  //아이템 재생성을 위한 시간체크용 변수
-                    //아이템 기능을 일부 구현했으나, 먹으면 사라지는 기능까지만 하고 시간이 지나면 다른 곳에 재생성되는 기능은 구현X
-
-    Board() {
-        construct(0, 0); //Board 클래스의 프라이빗 함수
+	int time = 50;
+	Board() {
+        construct(0, 0); 
     }
-    Board(int height, int width) {
+	Board(int height, int width)
+	{
+		construct(height, width);
+	}
 
-        construct(height, width);
-    }
+	void initialize()
+	{
+		clear();
+		displayMap1();
+		refresh();
+	}
+	void wdelwin() {
+		delwin(game_win);
+	}
 
-    void initialize() {
-        clear();
-        displayMap1(); //스테이지1 출력
-        refresh();
-    }
+	void addBorder()
+	{
+		box(game_win, '1', '1');
 
-    void addBorder() {
-        
-        box(game_win, '1', '1'); // wall
+		addAt(0, 0, '2');
+		addAt(0, BOARD_COLS - 1, '2');
+		addAt(BOARD_ROWS - 1, 0, '2');
+		addAt(BOARD_ROWS - 1, BOARD_COLS - 1, '2');
+	}
 
-        addAt(0, 0, '2'); //immune wall
-        addAt(0, BOARD_COLS - 1, '2');
-        addAt(BOARD_ROWS - 1, 0, '2');
-        addAt(BOARD_ROWS - 1, BOARD_COLS - 1, '2');
-    }
 
-    void add(Drawable drawable) { //맵에 스네이크, 아이템 추가
+
+    void add(Drawable drawable)
+    {
         addAt(drawable.getY(), drawable.getX(), drawable.getIcon());
     }
 
-    void addAt(int y, int x, chtype ch) {  //맵에 char 추가
+    void addAt(int y, int x, chtype ch)
+    {
         mvwaddch(game_win, y, x, ch);
     }
 
-    chtype getInput() {  // 키보드 입력받기
+    chtype getInput()
+    {
         return wgetch(game_win);
     }
 
-    void getEmptyPos(int& x, int& y) {  //아이템 생성을 위해 비어있는 좌표 탐색
-        while ((mvwinch(game_win, y = rand() % 30, x = rand() % 30)) != ' ')
+    void getEmptyPos(int& y, int& x)
+    {
+        while ((mvwinch(game_win, y = rand() % height, x = rand() % width)) != ' ')
             ;
     }
 
-    chtype getCharAt(int y, int x)  // 맵의 특정 좌표에 어떤 char가 들어가있는지 확인
+    void getRandom(int& y, int& x)
+    {
+        while ((mvwinch(game_win, y = rand() % height, x = rand() % width)) != '1')
+            ;
+    }
+
+    chtype getCharAt(int y, int x)
     {
         return mvwinch(game_win, y, x);
     }
 
-
-    void clear() {
+    void clear()
+    {
         wclear(game_win);
-        addBorder();
     }
 
-    void displayMap1(){ //game_win에 스테이지1 출력
+    void refresh()
+    {
+        wrefresh(game_win);
+    }
+
+    void setTimeout(int timeout)
+    {
+        wtimeout(game_win, timeout);
+    }
+
+    int getStartRow()
+    {
+        return start_row;
+    }
+
+    int getStartCol()
+    {
+        return start_col;
+    }
+
+    void displayMap1(){ 
         char map1[30][30] = {
             {'2','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','2'},
             {'1','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','1'},
@@ -103,7 +139,7 @@ public:
         }
     }
 
-    void displayMap2() { //game_win에 스테이지2 출력
+    void displayMap2() {
         char map2[30][30] = {
                {'2','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','2'},
                {'1','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','1'},
@@ -145,7 +181,7 @@ public:
         }
     }
 
-    void displayMap3() { //game_win에 스테이지3 출력
+    void displayMap3() { 
         char map3[30][30] = {
             {'2','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','2'},
             {'1','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','1'},
@@ -187,7 +223,7 @@ public:
         }
     }
 
-    void displayMap4() { //game_win에 스테이지4 출력
+    void displayMap4() { 
         char map4[30][30] = {
             {'2','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','2'},
             {'1','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','1'},
@@ -228,27 +264,20 @@ public:
             }
         }
     }
-    void refresh() {
-        wrefresh(game_win);
-    }
-
-    void setTimeout(int timeout) { //일시정지 및 일시정지 해제에 사용하는 타임아웃 함수
-        wtimeout(game_win, timeout);
-    }
-
 private:
-    WINDOW *game_win;
-    int height, width;
+	WINDOW* game_win;
 
-    void construct(int height, int width) {
+	int height, width, start_row, start_col;
+
+	void construct(int height, int width) {
         int xMax, yMax;
         getmaxyx(stdscr, yMax, xMax);
         this->height = height;
         this->width = width;
 
-        game_win = newwin(height, width, 0, 10);
+        game_win = newwin(height, width+20, 0, 4);
 
-        wtimeout(game_win, 500); //틱 설정
-        keypad(game_win, true); //키보드 입력 설정
+        wtimeout(game_win, 500);
+        keypad(game_win, true); 
     }
 };
